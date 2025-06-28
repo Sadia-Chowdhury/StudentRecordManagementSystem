@@ -1,0 +1,35 @@
+# Ignore build output
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio cache files
+.vs/
+
+# Build results
+*.dll
+*.exe
+*.app
+*.pdb
+
+# NuGet Packages
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+
+# EF Core Migrations snapshot
+Migrations/*ModelSnapshot.cs
+
+# Logs
+*.log
+
+# Others
+*.db
+*.db-shm
+*.db-wal
