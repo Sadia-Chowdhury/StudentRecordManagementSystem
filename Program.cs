@@ -15,7 +15,8 @@ namespace Student_Record_Management_System
                     Console.WriteLine("1. Add Student");
                     Console.WriteLine("2. View All Students");
                     Console.WriteLine("3. Update Student");
-                    Console.WriteLine("4. Exit");
+                    Console.WriteLine("4. Delete Student Info");
+                    Console.WriteLine("5. Exit");
 
                     Console.Write("Enter your choice: ");
                     string choice = Console.ReadLine();
@@ -32,6 +33,23 @@ namespace Student_Record_Management_System
                             UpdateStudent(context);
                             break;
                         case "4":
+                            Console.Write("Enter Student ID to delete: ");
+                            int deleteId = Convert.ToInt32(Console.ReadLine());
+
+                            var studentToDelete = context.Students.FirstOrDefault(s => s.Id == deleteId);
+
+                            if (studentToDelete != null)
+                            {
+                                context.Students.Remove(studentToDelete);
+                                context.SaveChanges();
+                                Console.WriteLine(" Student deleted successfully.");
+                            }
+                            else
+                            {
+                                Console.WriteLine(" Student not found.");
+                            }
+                            break;
+                        case "5":
                             Console.WriteLine("Goodbye!");
                             return;
                         default:
@@ -75,7 +93,7 @@ namespace Student_Record_Management_System
             Console.WriteLine("\n All Students:");
             foreach (var s in students)
             {
-                Console.WriteLine($" ID: {s.Id} | 👤 Name: {s.Name} | 🎂 Age: {s.Age}");
+                Console.WriteLine($" ID: {s.Id} |  Name: {s.Name} |  Age: {s.Age}");
                 Console.WriteLine();
             }
         }
