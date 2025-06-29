@@ -1,5 +1,5 @@
-﻿using StudentRecordManagementSystem.Data;
-using Student_Record_Management_System.Models;
+﻿using Student_Record_Management_System.Models;
+using StudentRecordManagementSystem.Data;
 
 namespace Student_Record_Management_System
 {
@@ -9,16 +9,15 @@ namespace Student_Record_Management_System
         {
             using (var context = new AppDbContext())
             {
-                bool exit = false;
-
-                while (!exit)
+                while (true)
                 {
-                    Console.WriteLine("\n Student Record Management");
+                    Console.WriteLine(" Student Record Management System");
                     Console.WriteLine("1. Add Student");
                     Console.WriteLine("2. View All Students");
-                    Console.WriteLine("3. Exit");
-                    Console.Write("Enter your choice: ");
+                    Console.WriteLine("3. Update Student");
+                    Console.WriteLine("4. Exit");
 
+                    Console.Write("Enter your choice: ");
                     string choice = Console.ReadLine();
 
                     switch (choice)
@@ -27,14 +26,16 @@ namespace Student_Record_Management_System
                             AddStudent(context);
                             break;
                         case "2":
-                            ViewAllStudents(context);
+                            ViewStudents(context);
                             break;
                         case "3":
-                            exit = true;
-                            Console.WriteLine(" Exiting... Goodbye!");
+                            UpdateStudent(context);
                             break;
+                        case "4":
+                            Console.WriteLine("Goodbye!");
+                            return;
                         default:
-                            Console.WriteLine("Invalid choice. Please try again.");
+                            Console.WriteLine("Invalid choice. Try again.");
                             break;
                     }
                 }
@@ -43,41 +44,69 @@ namespace Student_Record_Management_System
 
         static void AddStudent(AppDbContext context)
         {
-            Console.Write("Enter student name: ");
+            Console.Write("Enter Student Name: ");
             string name = Console.ReadLine();
 
-            Console.Write("Enter student age: ");
-            bool validAge = int.TryParse(Console.ReadLine(), out int age);
+            Console.Write("Enter Student Age: ");
+            bool isValidAge = int.TryParse(Console.ReadLine(), out int age);
 
-            if (!validAge || age <= 0)
+            if (!isValidAge || age <= 0)
             {
-                Console.WriteLine(" Invalid age. Try again.");
+                Console.WriteLine("❌ Invalid age.");
                 return;
             }
 
             var student = new Student { Name = name, Age = age };
-
             context.Students.Add(student);
             context.SaveChanges();
-
-            Console.WriteLine("Student added successfully!");
+            Console.WriteLine(" Student added successfully!");
+            Console.WriteLine();
         }
 
-        static void ViewAllStudents(AppDbContext context)
+        static void ViewStudents(AppDbContext context)
         {
             var students = context.Students.ToList();
-
             if (students.Count == 0)
             {
-                Console.WriteLine(" No students found.");
+                Console.WriteLine("No students found.");
                 return;
             }
 
-            Console.WriteLine("\n Student List:");
+            Console.WriteLine("\n All Students:");
             foreach (var s in students)
             {
-                Console.WriteLine($" {s.Id} | 👤 Name: {s.Name} | 🎂 Age: {s.Age}");
+                Console.WriteLine($" ID: {s.Id} | 👤 Name: {s.Name} | 🎂 Age: {s.Age}");
+                Console.WriteLine();
             }
+        }
+
+        static void UpdateStudent(AppDbContext context)
+        {
+            Console.Write("Enter ID of the student to update: ");
+            int id = Convert.ToInt32(Console.ReadLine());
+
+            var student = context.Students.FirstOrDefault(s => s.Id == id);
+            if (student == null)
+            {
+                Console.WriteLine(" Student not found.");
+                Console.WriteLine();
+                return;
+            }
+
+            Console.Write("Enter new name (leave blank to keep unchanged): ");
+            string newName = Console.ReadLine();
+            Console.Write("Enter new age (or press Enter to skip): ");
+            string ageInput = Console.ReadLine();
+
+            if (!string.IsNullOrWhiteSpace(newName))
+                student.Name = newName;
+
+            if (int.TryParse(ageInput, out int newAge) && newAge > 0)
+                student.Age = newAge;
+
+            context.SaveChanges();
+            Console.WriteLine(" Student updated successfully!");
+            Console.WriteLine();
         }
     }
 }
